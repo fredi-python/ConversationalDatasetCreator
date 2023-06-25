@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Conversational Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .button-container {
+            text-align: center;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .button-secondary {
+            background-color: #ccc;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversational Data</h1>
+        
+        <div class="form-group">
+            <label for="prompt">Prompt</label>
+            <input type="text" id="prompt">
+        </div>
+        
+        <div class="form-group">
+            <label for="response">Response</label>
+            <input type="text" id="response">
+        </div>
+        
+        <div class="button-container">
+            <button class="button" onclick="addConversationalData()">Press to Add More Conversational Data</button>
+        </div>
+        
+        <div class="button-container">
+            <button class="button" onclick="submitToFile()">Submit to File</button>
+            <button class="button" onclick="clearForm()">New Conversation</button>
+        </div>
+
+
+        
+        <script>
+            function addConversationalData() {
+                var promptInput = document.getElementById('prompt').cloneNode(true);
+                promptInput.className = 'promptInput'; // Assign the class name
+
+                var responseInput = document.getElementById('response').cloneNode(true);
+                responseInput.className = 'responseInput'; // Assign the class name
+
+                
+                promptInput.value = '';
+                responseInput.value = '';
+                
+                var promptLabel = document.createElement('label');
+                promptLabel.innerHTML = 'Prompt';
+                
+                var responseLabel = document.createElement('label');
+                responseLabel.innerHTML = 'Response';
+                
+                var formGroupPrompt = document.createElement('div');
+                formGroupPrompt.className = 'form-group';
+                formGroupPrompt.appendChild(promptLabel);
+                formGroupPrompt.appendChild(promptInput);
+                
+                var formGroupResponse = document.createElement('div');
+                formGroupResponse.className = 'form-group';
+                formGroupResponse.appendChild(responseLabel);
+                formGroupResponse.appendChild(responseInput);
+                
+                var buttonContainer = document.getElementsByClassName('button-container')[0];
+                
+                buttonContainer.parentNode.insertBefore(formGroupPrompt, buttonContainer);
+                buttonContainer.parentNode.insertBefore(formGroupResponse, buttonContainer);
+            }
+            
+            var conversationCount = 0; // Keep track of the conversation count
+
+            function submitToFile() {
+                var formData = [];
+                var formGroups = document.getElementsByClassName('form-group');
+
+                for (var i = 0; i < formGroups.length; i += 2) {
+                    var promptInput = formGroups[i].getElementsByTagName('input')[0].value;
+                    var responseInput = formGroups[i + 1].getElementsByTagName('input')[0].value;
+
+                    var conversation = `<human>: ${promptInput}\n<bot>: ${responseInput}`;
+
+                    formData.push(conversation);
+                }
+
+                var jsonData = {
+                    "text": formData.join('\n')
+                };
+
+                var jsonText = JSON.stringify(jsonData);
+
+                // Send the JSONL data to the server
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'save_file.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            alert('File saved on the server.');
+                        } else {
+                            alert('Error occurred while saving the file.');
+                        }
+                    }
+                };
+                xhr.send(jsonText);
+            }
+
+
+           function clearForm() {
+              var url = window.location.href;
+              var separator = url.includes('?') ? '&' : '?';
+              var refreshedUrl = url + separator + 'cache=' + Date.now();
+              window.location.href = refreshedUrl;
+          }
+
+
+
+        </script>
+    </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</body>
+</html>
+
