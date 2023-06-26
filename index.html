@@ -28,7 +28,7 @@
             font-weight: bold;
         }
         
-        input[type="text"] {
+        textarea {
             width: 100%;
             padding: 10px;
             font-size: 16px;
@@ -63,12 +63,12 @@
         
         <div class="form-group">
             <label for="prompt">Prompt</label>
-            <input type="text" id="prompt">
+            <textarea id="prompt"></textarea>
         </div>
         
         <div class="form-group">
             <label for="response">Response</label>
-            <input type="text" id="response">
+            <textarea id="response"></textarea>
         </div>
         
         <div class="button-container">
@@ -90,32 +90,31 @@
                 var responseInput = document.getElementById('response').cloneNode(true);
                 responseInput.className = 'responseInput'; // Assign the class name
 
-                
                 promptInput.value = '';
                 responseInput.value = '';
-                
+
                 var promptLabel = document.createElement('label');
                 promptLabel.innerHTML = 'Prompt';
-                
+
                 var responseLabel = document.createElement('label');
                 responseLabel.innerHTML = 'Response';
-                
+
                 var formGroupPrompt = document.createElement('div');
                 formGroupPrompt.className = 'form-group';
                 formGroupPrompt.appendChild(promptLabel);
                 formGroupPrompt.appendChild(promptInput);
-                
+
                 var formGroupResponse = document.createElement('div');
                 formGroupResponse.className = 'form-group';
                 formGroupResponse.appendChild(responseLabel);
                 formGroupResponse.appendChild(responseInput);
-                
+
                 var buttonContainer = document.getElementsByClassName('button-container')[0];
-                
+
                 buttonContainer.parentNode.insertBefore(formGroupPrompt, buttonContainer);
                 buttonContainer.parentNode.insertBefore(formGroupResponse, buttonContainer);
             }
-            
+
             var conversationCount = 0; // Keep track of the conversation count
 
             function submitToFile() {
@@ -123,8 +122,8 @@
                 var formGroups = document.getElementsByClassName('form-group');
 
                 for (var i = 0; i < formGroups.length; i += 2) {
-                    var promptInput = formGroups[i].getElementsByTagName('input')[0].value;
-                    var responseInput = formGroups[i + 1].getElementsByTagName('input')[0].value;
+                    var promptInput = formGroups[i].getElementsByTagName('textarea')[0].value;
+                    var responseInput = formGroups[i + 1].getElementsByTagName('textarea')[0].value;
 
                     var conversation = `<human>: ${promptInput}\n<bot>: ${responseInput}`;
 
@@ -168,4 +167,3 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </body>
 </html>
-
